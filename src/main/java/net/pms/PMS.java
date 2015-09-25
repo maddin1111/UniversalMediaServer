@@ -1124,8 +1124,11 @@ public class PMS {
 			}
 		}
 
-		if (!isHeadless() && displayProfileChooser) {
-			ProfileChooser.display();
+		if (!isHeadless() ) {
+			LooksFrame.initializeLookAndFeel();
+			if (displayProfileChooser) {
+				ProfileChooser.display();
+			}
 		}
 
 		try {
