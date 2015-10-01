@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.plaf.ProgressBarUI;
+import net.pms.PMS;
 import org.apache.commons.lang3.StringUtils;
 
 public final class GuiUtil {
@@ -578,11 +579,21 @@ public final class GuiUtil {
 		}
 	}
 
+	protected static boolean isRtlLocale = !ComponentOrientation.getOrientation(PMS.getLocale()).isLeftToRight();
+
 	public static String htmlify(String text) {
+		return htmlify(text, isRtlLocale);
+	}
+
+	public static String htmlify(String text, boolean rtl) {
 		// There is no syntax/encoding validation, we assume the string
 		// is either proper html or just ordinary plain text.
 		if (text != null && !text.trim().toLowerCase().startsWith("<html>")) {
-			return "<html>" + text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") + "</html>";
+			return "<html>"
+				+ (rtl ? "<div align=right>" : "")
+				+ text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+				+ (rtl ? "</div>" : "")
+				+ "</html>";
 		}
 		return text;
 	}
