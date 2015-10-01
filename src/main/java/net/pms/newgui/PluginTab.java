@@ -113,6 +113,9 @@ public class PluginTab {
 			}
 		};
 
+		DefaultTableCellRenderer orientedCellRenderer = builder.getOrientedCellRenderer();
+		table.setDefaultRenderer(table.getColumnClass(0), orientedCellRenderer);
+
 		refresh(table, cols);
 
 		table.setRowHeight(22);
@@ -230,6 +233,8 @@ public class PluginTab {
 		cmp = builder._addSeparator(Messages.getString("PluginTab.8"), cc.xyw(1, 11, 9));
 		cmp = (JComponent) cmp.getComponent(0);
 		cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
+
+		credTable.setDefaultRenderer(credTable.getColumnClass(0), orientedCellRenderer);
 
 		credTable.setRowHeight(22);
 		credTable.setIntercellSpacing(new Dimension(8, 0));

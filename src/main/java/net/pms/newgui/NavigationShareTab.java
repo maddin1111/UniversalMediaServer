@@ -628,6 +628,9 @@ public class NavigationShareTab {
 
 		folderTableModel = new SharedFoldersTableModel();
 		FList = new JTable(folderTableModel);
+
+		FList.setDefaultRenderer(FList.getColumnClass(0), builderFolder.getOrientedCellRenderer());
+
 		TableColumn column = FList.getColumnModel().getColumn(0);
 		column.setMinWidth(650);
 
