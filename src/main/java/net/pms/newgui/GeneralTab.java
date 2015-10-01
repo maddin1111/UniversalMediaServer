@@ -20,7 +20,6 @@ package net.pms.newgui;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import com.sun.jna.Platform;
 import java.awt.*;
 import java.awt.event.*;
@@ -37,8 +36,7 @@ import net.pms.Messages;
 import net.pms.network.NetworkConfiguration;
 import net.pms.newgui.components.CustomJButton;
 import net.pms.newgui.components.CustomJCheckBox;
-import net.pms.newgui.components.CustomPanelBuilder;
-import net.pms.util.FormLayoutUtil;
+import net.pms.newgui.components.OrientedPanelBuilder;
 import net.pms.util.KeyedComboBoxModel;
 import net.pms.util.Languages;
 import net.pms.util.WindowsUtil;
@@ -84,16 +82,12 @@ public class GeneralTab {
 	public JComponent build() {
 		// count the lines easier to add new ones
 		int ypos = 1;
-		// Apply the orientation for the locale
-		ComponentOrientation orientation = ComponentOrientation.getOrientation(PMS.getLocale());
-		String colSpec = FormLayoutUtil.getColSpec(COL_SPEC, orientation);
 
-		FormLayout layout = new FormLayout(colSpec, ROW_SPEC);
-		CustomPanelBuilder builder = new CustomPanelBuilder(layout);
+		OrientedPanelBuilder builder = new OrientedPanelBuilder(COL_SPEC, ROW_SPEC);
 		builder.border(Borders.DLU4);
 		builder.opaque(true);
 
-		CellConstraints cc = new CellConstraints();
+		CellConstraints cc = builder.getCellConstraints();
 
 		smcheckBox = new CustomJCheckBox(Messages.getString("NetworkTab.3"), configuration.isMinimized());
 		smcheckBox.setContentAreaFilled(false);
@@ -104,11 +98,11 @@ public class GeneralTab {
 			}
 		});
 
-		JComponent cmp = builder.addSeparator(Messages.getString("NetworkTab.5"), FormLayoutUtil.flip(cc.xyw(1, ypos, 9), colSpec, orientation));
+		JComponent cmp = builder._addSeparator(Messages.getString("NetworkTab.5"), cc.xyw(1, ypos, 9));
 		cmp = (JComponent) cmp.getComponent(0);
 		cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
 		ypos = 7; // we hardcode here (promise last time)
-		builder._addLabel(Messages.getString("NetworkTab.0"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+		builder._addLabel(Messages.getString("NetworkTab.0"), cc.xy(1, ypos));
 		final KeyedComboBoxModel kcbm = new KeyedComboBoxModel(Languages.getLanguageTags(), Languages.getLanguageNames());
 		jLanguage = new JComboBox(kcbm);
 		jLanguage.setEditable(false);
@@ -128,7 +122,7 @@ public class GeneralTab {
 			}
 		});
 
-		builder.add(jLanguage, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+		builder.add(jLanguage, cc.xyw(3, ypos, 7));
 		ypos += 2;
 
 		if (!configuration.isHideAdvancedOptions()) {
@@ -139,8 +133,8 @@ public class GeneralTab {
 					configuration.setServerName(serverName.getText());
 				}
 			});
-			builder._addLabel(Messages.getString("NetworkTab.71"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
-			builder.add(serverName, FormLayoutUtil.flip(cc.xyw(3, ypos, 3), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.71"), cc.xy(1, ypos));
+			builder.add(serverName, cc.xyw(3, ypos, 3));
 
 			appendProfileName = new CustomJCheckBox(Messages.getString("NetworkTab.72"), configuration.isAppendProfileName());
 			appendProfileName.setToolTipText(Messages.getString("NetworkTab.73"));
@@ -151,11 +145,11 @@ public class GeneralTab {
 					configuration.setAppendProfileName((e.getStateChange() == ItemEvent.SELECTED));
 				}
 			});
-			builder.add(appendProfileName, FormLayoutUtil.flip(cc.xy(7, ypos), colSpec, orientation));
+			builder.add(appendProfileName, cc.xy(7, ypos));
 			ypos += 2;
 		}
 
-		builder.add(smcheckBox, FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+		builder.add(smcheckBox, cc.xy(1, ypos));
 
 		if (Platform.isWindows()) {
 			autoStart = new CustomJCheckBox(Messages.getString("NetworkTab.57"), configuration.isAutoStart());
@@ -166,7 +160,7 @@ public class GeneralTab {
 					configuration.setAutoStart((e.getStateChange() == ItemEvent.SELECTED));
 				}
 			});
-			builder.add(autoStart, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+			builder.add(autoStart, cc.xyw(3, ypos, 7));
 		}
 		ypos += 2;
 
@@ -174,7 +168,7 @@ public class GeneralTab {
 			installService = new CustomJButton();
 			refreshInstallServiceButtonState();
 
-			builder.add(installService, FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+			builder.add(installService, cc.xy(1, ypos));
 			ypos += 2;
 		}
 
@@ -185,7 +179,7 @@ public class GeneralTab {
 				looksFrame.checkForUpdates(false);
 			}
 		});
-		builder.add(checkForUpdates, FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+		builder.add(checkForUpdates, cc.xy(1, ypos));
 
 		autoUpdateCheckBox = new CustomJCheckBox(Messages.getString("NetworkTab.9"), configuration.isAutoUpdate());
 		autoUpdateCheckBox.setContentAreaFilled(false);
@@ -195,7 +189,7 @@ public class GeneralTab {
 				configuration.setAutoUpdate((e.getStateChange() == ItemEvent.SELECTED));
 			}
 		});
-		builder.add(autoUpdateCheckBox, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+		builder.add(autoUpdateCheckBox, cc.xyw(3, ypos, 7));
 		ypos += 2;
 		if (!Build.isUpdatable()) {
 			checkForUpdates.setEnabled(false);
@@ -215,7 +209,7 @@ public class GeneralTab {
 				}
 			}
 		});
-		builder.add(hideAdvancedOptions, FormLayoutUtil.flip(cc.xyw(1, ypos, 9), colSpec, orientation));
+		builder.add(hideAdvancedOptions, cc.xyw(1, ypos, 9));
 		ypos += 2;
 
 		runWizardOnProgramStartup = new CustomJCheckBox(Messages.getString("GeneralTab.9"), configuration.isRunWizard());
@@ -226,7 +220,7 @@ public class GeneralTab {
 				configuration.setRunWizard(runWizardOnProgramStartup.isSelected());
 			}
 		});
-		builder.add(runWizardOnProgramStartup, FormLayoutUtil.flip(cc.xyw(1, ypos, 9), colSpec, orientation));
+		builder.add(runWizardOnProgramStartup, cc.xyw(1, ypos, 9));
 		ypos += 2;
 
 		if (!configuration.isHideAdvancedOptions()) {
@@ -239,7 +233,7 @@ public class GeneralTab {
 					configuration.setRunSingleInstance(singleInstance.isSelected());
 				}
 			});
-			builder.add(singleInstance, FormLayoutUtil.flip(cc.xyw(1, ypos, 9), colSpec, orientation));
+			builder.add(singleInstance, cc.xyw(1, ypos, 9));
 			ypos += 2;
 		}
 
@@ -320,7 +314,7 @@ public class GeneralTab {
 					}
 				}
 			});
-			builder.add(confEdit, FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+			builder.add(confEdit, cc.xy(1, ypos));
 			ypos += 2;
 
 			host = new JTextField(configuration.getServerHostname());
@@ -350,7 +344,7 @@ public class GeneralTab {
 				}
 			});
 
-			cmp = builder.addSeparator(Messages.getString("NetworkTab.22"), FormLayoutUtil.flip(cc.xyw(1, ypos, 9), colSpec, orientation));
+			cmp = builder._addSeparator(Messages.getString("NetworkTab.22"), cc.xyw(1, ypos, 9));
 			ypos += 2;
 			cmp = (JComponent) cmp.getComponent(0);
 			cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
@@ -399,24 +393,24 @@ public class GeneralTab {
 				}
 			});
 
-			builder._addLabel(Messages.getString("NetworkTab.20"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
-			builder.add(networkinterfacesCBX, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.20"), cc.xy(1, ypos));
+			builder.add(networkinterfacesCBX, cc.xyw(3, ypos, 7));
 			ypos += 2;
-			builder._addLabel(Messages.getString("NetworkTab.23"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
-			builder.add(host, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.23"), cc.xy(1, ypos));
+			builder.add(host, cc.xyw(3, ypos, 7));
 			ypos += 2;
-			builder._addLabel(Messages.getString("NetworkTab.24"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
-			builder.add(port, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.24"), cc.xy(1, ypos));
+			builder.add(port, cc.xyw(3, ypos, 7));
 			ypos += 2;
-			builder._addLabel(Messages.getString("NetworkTab.30"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
-			builder.add(ip_filter, FormLayoutUtil.flip(cc.xyw(3, ypos, 7), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.30"), cc.xy(1, ypos));
+			builder.add(ip_filter, cc.xyw(3, ypos, 7));
 			ypos += 2;
-			builder._addLabel(Messages.getString("NetworkTab.35"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
-			builder.add(maxbitrate, FormLayoutUtil.flip(cc.xyw(3, ypos, 3), colSpec, orientation));
-			builder.add(adaptBitrate, FormLayoutUtil.flip(cc.xy(7, ypos), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.35"), cc.xy(1, ypos));
+			builder.add(maxbitrate, cc.xyw(3, ypos, 3));
+			builder.add(adaptBitrate, cc.xy(7, ypos));
 			ypos += 2;
 
-			cmp = builder.addSeparator(Messages.getString("NetworkTab.31"), FormLayoutUtil.flip(cc.xyw(1, ypos, 9), colSpec, orientation));
+			cmp = builder._addSeparator(Messages.getString("NetworkTab.31"), cc.xyw(1, ypos, 9));
 			ypos += 2;
 			cmp = (JComponent) cmp.getComponent(0);
 			cmp.setFont(cmp.getFont().deriveFont(Font.BOLD));
@@ -428,7 +422,7 @@ public class GeneralTab {
 					configuration.setHTTPEngineV2((e.getStateChange() == ItemEvent.SELECTED));
 				}
 			});
-			builder.add(newHTTPEngine, FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+			builder.add(newHTTPEngine, cc.xy(1, ypos));
 
 			if (Platform.isWindows()) {
 				preventSleep = new CustomJCheckBox(Messages.getString("NetworkTab.33"), configuration.isPreventsSleep());
@@ -438,13 +432,13 @@ public class GeneralTab {
 						configuration.setPreventsSleep((e.getStateChange() == ItemEvent.SELECTED));
 					}
 				});
-				builder.add(preventSleep, FormLayoutUtil.flip(cc.xy(3, ypos), colSpec, orientation));
+				builder.add(preventSleep, cc.xy(3, ypos));
 			}
 			ypos += 2;
 
 			final SelectRenderers selectRenderers = new SelectRenderers();
-			
-			builder._addLabel(Messages.getString("NetworkTab.62"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+
+			builder._addLabel(Messages.getString("NetworkTab.62"), cc.xy(1, ypos));
 			final CustomJButton setRenderers = new CustomJButton(Messages.getString("GeneralTab.5"));
 			setRenderers.addActionListener(new ActionListener() {
 				@Override
@@ -453,12 +447,12 @@ public class GeneralTab {
 				}
 			});
 
-			builder.add(setRenderers, FormLayoutUtil.flip(cc.xy(3, ypos), colSpec, orientation));
+			builder.add(setRenderers, cc.xyw(3, ypos, 3));
 			ypos += 2;
 
-			builder._addLabel(Messages.getString("NetworkTab.36"), FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+			builder._addLabel(Messages.getString("NetworkTab.36"), cc.xy(1, ypos));
 
-			builder.add(renderers, FormLayoutUtil.flip(cc.xyw(3, ypos, 3), colSpec, orientation));
+			builder.add(renderers, cc.xyw(3, ypos, 3));
 
 			fdCheckBox = new CustomJCheckBox(Messages.getString("NetworkTab.38"), configuration.isRendererForceDefault());
 			fdCheckBox.setContentAreaFilled(false);
@@ -468,7 +462,7 @@ public class GeneralTab {
 					configuration.setRendererForceDefault((e.getStateChange() == ItemEvent.SELECTED));
 				}
 			});
-			builder.add(fdCheckBox, FormLayoutUtil.flip(cc.xy(7, ypos), colSpec, orientation));
+			builder.add(fdCheckBox, cc.xy(7, ypos));
 
 			ypos += 2;
 
@@ -482,14 +476,11 @@ public class GeneralTab {
 					configuration.setExternalNetwork((e.getStateChange() == ItemEvent.SELECTED));
 				}
 			});
-			builder.add(extNetBox, FormLayoutUtil.flip(cc.xy(1, ypos), colSpec, orientation));
+			builder.add(extNetBox, cc.xy(1, ypos));
 			ypos += 2;
 		}
 
-		JPanel panel = builder.getPanel();
-
-		// Apply the orientation to the panel and all components in it
-		panel.applyComponentOrientation(orientation);
+		JPanel panel = builder._getPanel();
 
 		JScrollPane scrollPane = new JScrollPane(
 			panel,
